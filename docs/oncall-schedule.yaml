@@ -1,0 +1,460 @@
+# Created automatically by Cursor AI (2024-12-19)
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: oncall-schedule
+  namespace: operations
+  labels:
+    app: oncall-schedule
+    version: v1.0.0
+data:
+  schedule.yaml: |
+    # AI Video Summarizer - On-Call Schedule Configuration
+    
+    # Schedule Configuration
+    schedule:
+      # Primary On-Call Rotation (7 days each)
+      primary:
+        rotation_type: "weekly"
+        handoff_time: "09:00 UTC"
+        handoff_day: "Monday"
+        escalation_time: "30 minutes"
+        
+        # Team Members
+        members:
+          - name: "Alice Johnson"
+            email: "alice.johnson@example.com"
+            phone: "+1-555-0101"
+            slack: "@alice.johnson"
+            timezone: "America/New_York"
+            skills: ["backend", "infrastructure", "monitoring"]
+            
+          - name: "Bob Smith"
+            email: "bob.smith@example.com"
+            phone: "+1-555-0102"
+            slack: "@bob.smith"
+            timezone: "America/Los_Angeles"
+            skills: ["frontend", "api", "security"]
+            
+          - name: "Carol Davis"
+            email: "carol.davis@example.com"
+            phone: "+1-555-0103"
+            slack: "@carol.davis"
+            timezone: "Europe/London"
+            skills: ["devops", "kubernetes", "aws"]
+            
+          - name: "David Wilson"
+            email: "david.wilson@example.com"
+            phone: "+1-555-0104"
+            slack: "@david.wilson"
+            timezone: "Asia/Tokyo"
+            skills: ["ml", "gpu", "video-processing"]
+            
+          - name: "Eva Brown"
+            email: "eva.brown@example.com"
+            phone: "+1-555-0105"
+            slack: "@eva.brown"
+            timezone: "Australia/Sydney"
+            skills: ["fullstack", "testing", "monitoring"]
+            
+          - name: "Frank Miller"
+            email: "frank.miller@example.com"
+            phone: "+1-555-0106"
+            slack: "@frank.miller"
+            timezone: "America/Chicago"
+            skills: ["backend", "database", "performance"]
+            
+          - name: "Grace Lee"
+            email: "grace.lee@example.com"
+            phone: "+1-555-0107"
+            slack: "@grace.lee"
+            timezone: "Europe/Berlin"
+            skills: ["frontend", "ux", "accessibility"]
+            
+          - name: "Henry Taylor"
+            email: "henry.taylor@example.com"
+            phone: "+1-555-0108"
+            slack: "@henry.taylor"
+            timezone: "America/Denver"
+            skills: ["infrastructure", "security", "compliance"]
+    
+      # Secondary On-Call Rotation (Backup)
+      secondary:
+        rotation_type: "weekly"
+        handoff_time: "09:00 UTC"
+        handoff_day: "Monday"
+        escalation_time: "1 hour"
+        
+        members:
+          - name: "Iris Chen"
+            email: "iris.chen@example.com"
+            phone: "+1-555-0109"
+            slack: "@iris.chen"
+            timezone: "America/New_York"
+            skills: ["backend", "ml", "monitoring"]
+            
+          - name: "Jack Anderson"
+            email: "jack.anderson@example.com"
+            phone: "+1-555-0110"
+            slack: "@jack.anderson"
+            timezone: "America/Los_Angeles"
+            skills: ["devops", "kubernetes", "aws"]
+            
+          - name: "Kate Rodriguez"
+            email: "kate.rodriguez@example.com"
+            phone: "+1-555-0111"
+            slack: "@kate.rodriguez"
+            timezone: "Europe/London"
+            skills: ["frontend", "api", "testing"]
+            
+          - name: "Liam O'Connor"
+            email: "liam.oconnor@example.com"
+            phone: "+1-555-0112"
+            slack: "@liam.oconnor"
+            timezone: "Europe/Dublin"
+            skills: ["backend", "database", "performance"]
+    
+      # Specialized Rotations
+      specialized:
+        # Security On-Call
+        security:
+          rotation_type: "monthly"
+          handoff_time: "09:00 UTC"
+          handoff_day: "First Monday"
+          escalation_time: "15 minutes"
+          
+          members:
+            - name: "Henry Taylor"
+              email: "henry.taylor@example.com"
+              phone: "+1-555-0108"
+              slack: "@henry.taylor"
+              timezone: "America/Denver"
+              
+            - name: "Maya Patel"
+              email: "maya.patel@example.com"
+              phone: "+1-555-0113"
+              slack: "@maya.patel"
+              timezone: "America/New_York"
+              
+            - name: "Noah Kim"
+              email: "noah.kim@example.com"
+              phone: "+1-555-0114"
+              slack: "@noah.kim"
+              timezone: "America/Los_Angeles"
+        
+        # ML/GPU On-Call
+        ml_gpu:
+          rotation_type: "weekly"
+          handoff_time: "09:00 UTC"
+          handoff_day: "Monday"
+          escalation_time: "30 minutes"
+          
+          members:
+            - name: "David Wilson"
+              email: "david.wilson@example.com"
+              phone: "+1-555-0104"
+              slack: "@david.wilson"
+              timezone: "Asia/Tokyo"
+              
+            - name: "Alice Johnson"
+              email: "alice.johnson@example.com"
+              phone: "+1-555-0101"
+              slack: "@alice.johnson"
+              timezone: "America/New_York"
+              
+            - name: "Carol Davis"
+              email: "carol.davis@example.com"
+              phone: "+1-555-0103"
+              slack: "@carol.davis"
+              timezone: "Europe/London"
+    
+    # Escalation Configuration
+    escalation:
+      # Escalation Levels
+      levels:
+        - level: 1
+          name: "Primary On-Call"
+          response_time: "15 minutes"
+          notification_methods: ["slack", "email", "phone"]
+          
+        - level: 2
+          name: "Secondary On-Call"
+          response_time: "30 minutes"
+          notification_methods: ["slack", "email", "phone"]
+          
+        - level: 3
+          name: "Engineering Manager"
+          response_time: "1 hour"
+          notification_methods: ["slack", "email"]
+          
+        - level: 4
+          name: "CTO/VP Engineering"
+          response_time: "2 hours"
+          notification_methods: ["slack", "email", "phone"]
+      
+      # Escalation Rules
+      rules:
+        - alert_severity: "critical"
+          auto_escalate_after: "15 minutes"
+          escalate_to_level: 2
+          
+        - alert_severity: "critical"
+          auto_escalate_after: "1 hour"
+          escalate_to_level: 3
+          
+        - alert_severity: "critical"
+          auto_escalate_after: "2 hours"
+          escalate_to_level: 4
+          
+        - alert_severity: "warning"
+          auto_escalate_after: "2 hours"
+          escalate_to_level: 2
+          
+        - alert_severity: "warning"
+          auto_escalate_after: "4 hours"
+          escalate_to_level: 3
+    
+    # Notification Configuration
+    notifications:
+      # Slack Configuration
+      slack:
+        channel: "#oncall"
+        incident_channel: "#incidents"
+        status_channel: "#status"
+        
+        # Message Templates
+        templates:
+          handoff: |
+            🔄 On-Call Handoff
+            **Primary**: {{ primary_oncall }}
+            **Secondary**: {{ secondary_oncall }}
+            **Duration**: {{ start_date }} - {{ end_date }}
+            **Handoff Notes**: {{ handoff_notes }}
+            
+          incident_start: |
+            🚨 Incident Started
+            **Alert**: {{ alert_name }}
+            **Severity**: {{ severity }}
+            **On-Call**: {{ oncall_engineer }}
+            **Description**: {{ description }}
+            
+          incident_update: |
+            📊 Incident Update
+            **Status**: {{ status }}
+            **ETA**: {{ eta }}
+            **Actions**: {{ actions_taken }}
+            
+          incident_resolved: |
+            ✅ Incident Resolved
+            **Duration**: {{ duration }}
+            **Root Cause**: {{ root_cause }}
+            **Resolution**: {{ resolution }}
+            
+          escalation: |
+            ⚠️ Escalation Required
+            **Alert**: {{ alert_name }}
+            **Escalated To**: {{ escalated_to }}
+            **Reason**: {{ reason }}
+            **Current Status**: {{ status }}
+      
+      # Email Configuration
+      email:
+        from: "oncall@example.com"
+        reply_to: "engineering@example.com"
+        
+        templates:
+          handoff: |
+            Subject: On-Call Handoff - {{ start_date }}
+            
+            Hi {{ oncall_engineer }},
+            
+            You are now on primary on-call duty from {{ start_date }} to {{ end_date }}.
+            
+            Key Information:
+            - Secondary on-call: {{ secondary_oncall }}
+            - Escalation time: {{ escalation_time }}
+            - Runbooks: https://runbooks.example.com
+            - Monitoring: https://grafana.example.com
+            
+            Please acknowledge this handoff by responding to this email.
+            
+            Best regards,
+            Engineering Team
+            
+          incident: |
+            Subject: [{{ severity }}] {{ alert_name }} - Action Required
+            
+            Hi {{ oncall_engineer }},
+            
+            A {{ severity }} incident has been triggered:
+            
+            Alert: {{ alert_name }}
+            Description: {{ description }}
+            Time: {{ timestamp }}
+            
+            Please investigate immediately and provide updates in the #incidents channel.
+            
+            Runbook: {{ runbook_url }}
+            
+            Best regards,
+            Monitoring System
+            
+          escalation: |
+            Subject: [ESCALATION] {{ alert_name }} - {{ escalated_to }}
+            
+            Hi {{ escalated_to }},
+            
+            The following incident has been escalated to you:
+            
+            Alert: {{ alert_name }}
+            Severity: {{ severity }}
+            Duration: {{ duration }}
+            Current Status: {{ status }}
+            
+            Primary on-call: {{ primary_oncall }}
+            Secondary on-call: {{ secondary_oncall }}
+            
+            Please review and provide guidance.
+            
+            Best regards,
+            On-Call System
+    
+    # Calendar Integration
+    calendar:
+      # Google Calendar Integration
+      google_calendar:
+        calendar_id: "oncall@example.com"
+        timezone: "UTC"
+        
+        # Event Configuration
+        events:
+          handoff:
+            title: "On-Call Handoff - {{ oncall_engineer }}"
+            description: |
+              Primary on-call handoff
+              
+              Primary: {{ oncall_engineer }}
+              Secondary: {{ secondary_oncall }}
+              
+              Runbooks: https://runbooks.example.com
+              Monitoring: https://grafana.example.com
+              
+            duration: "30 minutes"
+            reminder: "15 minutes"
+            
+          incident:
+            title: "🚨 {{ alert_name }}"
+            description: |
+              {{ description }}
+              
+              Severity: {{ severity }}
+              On-Call: {{ oncall_engineer }}
+              
+            duration: "1 hour"
+            reminder: "5 minutes"
+    
+    # Time Off and Coverage
+    time_off:
+      # Time Off Request Process
+      request_process:
+        - submit_request: "Submit via PagerDuty or email to engineering-manager@example.com"
+        - approval: "Engineering manager approval required"
+        - coverage: "Automatic coverage assignment from secondary rotation"
+        - notification: "Notify team 24 hours in advance"
+      
+      # Coverage Rules
+      coverage_rules:
+        - rule: "Minimum 2 engineers available at all times"
+        - rule: "Cross-timezone coverage required"
+        - rule: "Security incidents require security on-call"
+        - rule: "ML/GPU incidents require ML on-call"
+        - rule: "Holiday coverage rotates among team"
+      
+      # Holiday Coverage
+      holidays:
+        - date: "2024-12-25"
+          name: "Christmas Day"
+          coverage: "Volunteer basis with bonus"
+          
+        - date: "2024-12-31"
+          name: "New Year's Eve"
+          coverage: "Volunteer basis with bonus"
+          
+        - date: "2024-07-04"
+          name: "Independence Day"
+          coverage: "Rotating coverage"
+          
+        - date: "2024-11-28"
+          name: "Thanksgiving"
+          coverage: "Rotating coverage"
+    
+    # Training and Onboarding
+    training:
+      # New On-Call Engineer Onboarding
+      onboarding:
+        duration: "2 weeks"
+        components:
+          - "Shadow experienced on-call engineer"
+          - "Review all runbooks and procedures"
+          - "Practice incident response scenarios"
+          - "Setup all necessary access and tools"
+          - "Review monitoring dashboards"
+          - "Test alert notifications"
+      
+      # Ongoing Training
+      ongoing:
+        frequency: "Monthly"
+        components:
+          - "Incident response drills"
+          - "Tool and procedure updates"
+          - "Lessons learned from recent incidents"
+          - "New feature training"
+      
+      # Skills Assessment
+      skills:
+        required:
+          - "Basic troubleshooting"
+          - "Log analysis"
+          - "Kubernetes operations"
+          - "Database operations"
+          - "Monitoring tools"
+          
+        preferred:
+          - "Infrastructure automation"
+          - "Security incident response"
+          - "Performance optimization"
+          - "Cross-team communication"
+    
+    # Metrics and Reporting
+    metrics:
+      # Key Performance Indicators
+      kpis:
+        - name: "Response Time"
+          target: "< 15 minutes for critical"
+          measurement: "Time from alert to acknowledgment"
+          
+        - name: "Resolution Time"
+          target: "< 2 hours for critical"
+          measurement: "Time from alert to resolution"
+          
+        - name: "Escalation Rate"
+          target: "< 10%"
+          measurement: "Percentage of incidents escalated"
+          
+        - name: "On-Call Satisfaction"
+          target: "> 4.0/5.0"
+          measurement: "Monthly survey score"
+      
+      # Reporting
+      reporting:
+        frequency: "Monthly"
+        recipients:
+          - "engineering@example.com"
+          - "cto@example.com"
+          
+        content:
+          - "Incident summary"
+          - "Response time metrics"
+          - "Escalation analysis"
+          - "Process improvements"
+          - "Team feedback"

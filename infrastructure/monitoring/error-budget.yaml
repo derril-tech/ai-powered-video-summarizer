@@ -1,0 +1,272 @@
+# Created automatically by Cursor AI (2024-12-19)
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: error-budget-alerts
+  namespace: monitoring
+  labels:
+    prometheus: kube-prometheus
+    role: alert-rules
+spec:
+  groups:
+    - name: error-budget
+      rules:
+        # Video Processing Error Budget Alert
+        - alert: VideoProcessingErrorBudgetExhausted
+          expr: |
+            (
+              sum(rate(video_processing_errors_total[24h])) 
+              / 
+              sum(rate(video_processing_total[24h]))
+            ) * 100 > 1
+          for: 5m
+          labels:
+            severity: critical
+            service: video-processing
+          annotations:
+            summary: "Video processing error budget exhausted"
+            description: "Video processing error rate has exceeded 1% over the last 24 hours. Current error rate: {{ $value }}%"
+            runbook_url: "https://runbooks.example.com/video-processing-error-budget"
+
+        # API Gateway Error Budget Alert
+        - alert: APIGatewayErrorBudgetExhausted
+          expr: |
+            (
+              sum(rate(http_requests_total{status=~"5.."}[24h])) 
+              / 
+              sum(rate(http_requests_total[24h]))
+            ) * 100 > 0.5
+          for: 5m
+          labels:
+            severity: critical
+            service: api-gateway
+          annotations:
+            summary: "API Gateway error budget exhausted"
+            description: "API Gateway 5xx error rate has exceeded 0.5% over the last 24 hours. Current error rate: {{ $value }}%"
+            runbook_url: "https://runbooks.example.com/api-gateway-error-budget"
+
+        # Processing Time SLO Violation
+        - alert: VideoProcessingTimeSLOViolation
+          expr: |
+            histogram_quantile(0.95, 
+              sum(rate(video_processing_duration_seconds_bucket[5m])) by (le)
+            ) > 300
+          for: 10m
+          labels:
+            severity: warning
+            service: video-processing
+          annotations:
+            summary: "Video processing time SLO violation"
+            description: "95th percentile video processing time exceeds 5 minutes. Current: {{ $value }}s"
+            runbook_url: "https://runbooks.example.com/video-processing-time"
+
+        # Queue Depth Alert
+        - alert: VideoProcessingQueueOverflow
+          expr: |
+            sum(video_processing_queue_depth) > 100
+          for: 5m
+          labels:
+            severity: warning
+            service: video-processing
+          annotations:
+            summary: "Video processing queue overflow"
+            description: "Video processing queue depth exceeds 100 items. Current depth: {{ $value }}"
+            runbook_url: "https://runbooks.example.com/queue-overflow"
+
+        # Database Connection Pool Exhaustion
+        - alert: DatabaseConnectionPoolExhausted
+          expr: |
+            sum(db_connections_active) / sum(db_connections_max) * 100 > 90
+          for: 5m
+          labels:
+            severity: critical
+            service: database
+          annotations:
+            summary: "Database connection pool exhausted"
+            description: "Database connection pool usage exceeds 90%. Current usage: {{ $value }}%"
+            runbook_url: "https://runbooks.example.com/database-connections"
+
+        # Redis Memory Usage Alert
+        - alert: RedisMemoryUsageHigh
+          expr: |
+            redis_memory_used_bytes / redis_memory_max_bytes * 100 > 85
+          for: 5m
+          labels:
+            severity: warning
+            service: redis
+          annotations:
+            summary: "Redis memory usage high"
+            description: "Redis memory usage exceeds 85%. Current usage: {{ $value }}%"
+            runbook_url: "https://runbooks.example.com/redis-memory"
+
+        # GPU Utilization Alert
+        - alert: GPUUtilizationLow
+          expr: |
+            avg(nvidia_gpu_utilization{job="gpu-workers"}) < 20
+          for: 15m
+          labels:
+            severity: warning
+            service: gpu-workers
+          annotations:
+            summary: "GPU utilization low"
+            description: "Average GPU utilization is below 20%. Current: {{ $value }}%"
+            runbook_url: "https://runbooks.example.com/gpu-utilization"
+
+        # Storage Usage Alert
+        - alert: StorageUsageHigh
+          expr: |
+            (node_filesystem_size_bytes - node_filesystem_avail_bytes) 
+            / node_filesystem_size_bytes * 100 > 85
+          for: 5m
+          labels:
+            severity: warning
+            service: storage
+          annotations:
+            summary: "Storage usage high"
+            description: "Storage usage exceeds 85%. Current usage: {{ $value }}%"
+            runbook_url: "https://runbooks.example.com/storage-usage"
+
+        # Authentication Failure Rate Alert
+        - alert: AuthenticationFailureRateHigh
+          expr: |
+            (
+              sum(rate(auth_failures_total[5m])) 
+              / 
+              sum(rate(auth_attempts_total[5m]))
+            ) * 100 > 5
+          for: 5m
+          labels:
+            severity: critical
+            service: authentication
+          annotations:
+            summary: "Authentication failure rate high"
+            description: "Authentication failure rate exceeds 5%. Current rate: {{ $value }}%"
+            runbook_url: "https://runbooks.example.com/authentication-failures"
+
+        # Worker Health Check Alert
+        - alert: WorkerHealthCheckFailed
+          expr: |
+            up{job=~"gpu-worker|asr-worker|summarization-worker"} == 0
+          for: 2m
+          labels:
+            severity: critical
+            service: workers
+          annotations:
+            summary: "Worker health check failed"
+            description: "Worker {{ $labels.instance }} is down"
+            runbook_url: "https://runbooks.example.com/worker-health"
+
+        # NATS Connection Alert
+        - alert: NATSConnectionFailed
+          expr: |
+            up{job="nats"} == 0
+          for: 1m
+          labels:
+            severity: critical
+            service: nats
+          annotations:
+            summary: "NATS connection failed"
+            description: "NATS service is down"
+            runbook_url: "https://runbooks.example.com/nats-connection"
+
+        # S3 Upload Failure Alert
+        - alert: S3UploadFailureRateHigh
+          expr: |
+            (
+              sum(rate(s3_upload_failures_total[5m])) 
+              / 
+              sum(rate(s3_upload_attempts_total[5m]))
+            ) * 100 > 2
+          for: 5m
+          labels:
+            severity: warning
+            service: storage
+          annotations:
+            summary: "S3 upload failure rate high"
+            description: "S3 upload failure rate exceeds 2%. Current rate: {{ $value }}%"
+            runbook_url: "https://runbooks.example.com/s3-upload-failures"
+
+        # Frontend Error Rate Alert
+        - alert: FrontendErrorRateHigh
+          expr: |
+            (
+              sum(rate(frontend_errors_total[5m])) 
+              / 
+              sum(rate(frontend_requests_total[5m]))
+            ) * 100 > 1
+          for: 5m
+          labels:
+            severity: warning
+            service: frontend
+          annotations:
+            summary: "Frontend error rate high"
+            description: "Frontend error rate exceeds 1%. Current rate: {{ $value }}%"
+            runbook_url: "https://runbooks.example.com/frontend-errors"
+
+        # Rate Limiting Alert
+        - alert: RateLimitExceeded
+          expr: |
+            sum(rate(rate_limit_exceeded_total[5m])) > 10
+          for: 5m
+          labels:
+            severity: warning
+            service: api-gateway
+          annotations:
+            summary: "Rate limit exceeded"
+            description: "Rate limiting is being triggered frequently. Current rate: {{ $value }} per second"
+            runbook_url: "https://runbooks.example.com/rate-limiting"
+
+        # Job Processing Latency Alert
+        - alert: JobProcessingLatencyHigh
+          expr: |
+            histogram_quantile(0.95, 
+              sum(rate(job_processing_duration_seconds_bucket[5m])) by (le, job_type)
+            ) > 600
+          for: 10m
+          labels:
+            severity: warning
+            service: job-processing
+          annotations:
+            summary: "Job processing latency high"
+            description: "95th percentile job processing time exceeds 10 minutes for {{ $labels.job_type }}. Current: {{ $value }}s"
+            runbook_url: "https://runbooks.example.com/job-processing-latency"
+
+        # Dead Letter Queue Alert
+        - alert: DeadLetterQueueGrowing
+          expr: |
+            sum(dlq_jobs_total) > 50
+          for: 5m
+          labels:
+            severity: critical
+            service: job-processing
+          annotations:
+            summary: "Dead letter queue growing"
+            description: "Dead letter queue has more than 50 failed jobs. Current count: {{ $value }}"
+            runbook_url: "https://runbooks.example.com/dead-letter-queue"
+
+        # Memory Usage Alert
+        - alert: MemoryUsageHigh
+          expr: |
+            (node_memory_MemTotal_bytes - node_memory_MemAvailable_bytes) 
+            / node_memory_MemTotal_bytes * 100 > 85
+          for: 5m
+          labels:
+            severity: warning
+            service: infrastructure
+          annotations:
+            summary: "Memory usage high"
+            description: "Memory usage exceeds 85%. Current usage: {{ $value }}%"
+            runbook_url: "https://runbooks.example.com/memory-usage"
+
+        # CPU Usage Alert
+        - alert: CPUUsageHigh
+          expr: |
+            100 - (avg by(instance) (irate(node_cpu_seconds_total{mode="idle"}[5m])) * 100) > 80
+          for: 5m
+          labels:
+            severity: warning
+            service: infrastructure
+          annotations:
+            summary: "CPU usage high"
+            description: "CPU usage exceeds 80%. Current usage: {{ $value }}%"
+            runbook_url: "https://runbooks.example.com/cpu-usage"

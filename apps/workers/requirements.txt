@@ -1,0 +1,55 @@
+# Created automatically by Cursor AI (2024-12-19)
+
+# FastAPI and web framework
+fastapi==0.104.1
+uvicorn[standard]==0.24.0
+pydantic==2.5.0
+pydantic-settings==2.1.0
+
+# Database
+sqlalchemy==2.0.23
+psycopg2-binary==2.9.9
+alembic==1.13.1
+
+# NATS messaging
+nats-py==2.6.0
+
+# AWS/S3
+boto3==1.34.0
+botocore==1.34.0
+
+# Video processing
+ffmpeg-python==0.2.0
+opencv-python==4.8.1.78
+
+# AI/ML libraries
+torch==2.1.1
+torchaudio==2.1.1
+transformers==4.36.0
+whisperx==3.1.1
+sentence-transformers==2.2.2
+keybert==0.7.0
+spacy==3.7.2
+
+# Audio processing
+librosa==0.10.1
+soundfile==0.12.1
+
+# Image processing
+Pillow==10.1.0
+
+# Utilities
+python-multipart==0.0.6
+python-jose[cryptography]==3.3.0
+passlib[bcrypt]==1.7.4
+python-dotenv==1.0.0
+httpx==0.25.2
+redis==5.0.1
+
+# Development
+pytest==7.4.3
+pytest-asyncio==0.21.1
+black==23.11.0
+isort==5.12.0
+flake8==6.1.0
+mypy==1.7.1
